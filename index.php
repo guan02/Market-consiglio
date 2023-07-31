@@ -25,6 +25,9 @@
       display: flex;
       flex-direction: row;
     }
+    .titolo {
+      text-align: center;
+    }
     input[type="number"] {
       width: 60%;
     }
@@ -77,6 +80,7 @@
 
     foreach ($result as $row) {
       echo "<form class='prodotto' method='POST' action='oggetto.php'>";
+      echo "<h2 class=titolo>" . $row["Nome"] . "</h2>";
       echo "<img src='" . $row["foto"] . "' alt='penna' width='200' height='200'>";
       echo "<input type='hidden' name='nomeProdotto' value='" . $row["Nome"] . "'>";
       echo "<div class='row'> ";
