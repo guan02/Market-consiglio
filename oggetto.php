@@ -68,7 +68,7 @@ $codProdotto = $row["CodP"];
 
   
   $sql = "SELECT fornitore.nome AS fNome , fp.costo AS prezzo , fp.giornoSpedizione AS tempo ,sconto.valore AS sconto, sconto.scadenza AS scade,
-   sconto.condizione AS requisito, sconto.tipo AS tipoS  from fp, fornitore,registrosconto,sconto WHERE fp.codF = fornitore.codF AND fornitore.codF=registrosconto.id_codF AND registrosconto.id_codSconto=sconto.id AND fp.codP = '" . $codProdotto . "' AND fp.quantita >= '" . $quantita . "' GROUP BY fornitore.nome ";
+   sconto.condizione AS requisito, sconto.tipo AS tipoS  from fp, fornitore,registrosconto,sconto WHERE fp.codF = fornitore.codF AND fornitore.codF=registrosconto.id_codF AND registrosconto.id_codSconto=sconto.id AND fp.codP = '" . $codProdotto . "' AND fp.quantita >= '" . $quantita . "'";
   
 
 
@@ -85,6 +85,8 @@ $codProdotto = $row["CodP"];
 
 $minPrezzo = null;
 $minGiorno = null;
+$minPFnome = null;
+$minGFnome = null;
 foreach ($result as $row){
   if($minPrezzo == null && $minGiorno == null){
     $minPrezzo = $row["prezzo"];
@@ -92,23 +94,21 @@ foreach ($result as $row){
   }
   if($row["prezzo"] < $minPrezzo){
     $minPrezzo = $row["prezzo"];
+    $minPFnome = $row["fNome"];
+    $prezzoTOt = $row["prezzo"] * $quantita;
   }
   if($row["tempo"] < $minGiorno){
     $minGiorno = $row["tempo"];
+    $minGFnome = $row["fNome"];
   }
 }
 
 echo "<div id=elenco>";
-foreach ($result as $row) {
-  if ($row["prezzo"]==$minPrezzo){
-    $prezzoTOt = $row["prezzo"] * $quantita;
-    echo "<h3> Il fornitore " . $row["fNome"] . " offre il prezzo più basso (senza applicando sconto): " .$row["prezzo"] * $quantita. "€</h3>";
-  }
-  if($row["tempo"]==$minGiorno){
-    echo "<h3> Il fornitore " . $row["fNome"] . " offre il tempo di spedizione più corto: " . $row["tempo"] . " giorni</h3>";
-  }
-}
+echo "<h3> Il fornitore " . $minPFnome . " offre il prezzo più basso: " . $minPrezzo . "€</h3>";
+echo "<h3> Il fornitore " . $minGFnome . " offre il tempo di spedizione più corto: " . $minGiorno . " giorni</h3>";
+
 foreach ($result as $row){
+  
   $prezzoScontato=0;
   if($row["tipoS"] == "quantita"){
     if($quantita >= $row["requisito"]){
@@ -123,7 +123,7 @@ foreach ($result as $row){
     }
   }
   if($row["tipoS"] == "stagione"){
-    if(date("Y-m-d") <= $row["scade"]){
+    if(strtotime("now") <= strtotime($row["scade"])){
       $prezzoScontato += $row["prezzo"] * $quantita *$row["sconto"] / 100;
       
     }
@@ -132,6 +132,7 @@ foreach ($result as $row){
     $prezzoTOt = $row["prezzo"] * $quantita - $prezzoScontato;
   }
 }
+echo "prezzo scontato: ".$prezzoScontato."€";
 echo "<h3> Il prezzo totale più basso (applicando sconto) è: " . $prezzoTOt . "€</h3>";
 
 echo "</div>";
