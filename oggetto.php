@@ -104,7 +104,7 @@ foreach ($result as $row){
 }
 
 echo "<div id=elenco>";
-echo "<h3> Il fornitore " . $minPFnome . " offre il prezzo più basso: " . $minPrezzo . "€</h3>";
+echo "<h3> Il fornitore " . $minPFnome . " offre il prezzo più basso: " . $minPrezzo * $quantita. "€</h3>";
 echo "<h3> Il fornitore " . $minGFnome . " offre il tempo di spedizione più corto: " . $minGiorno . " giorni</h3>";
 
 foreach ($result as $row){
