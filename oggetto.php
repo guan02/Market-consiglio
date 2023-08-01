@@ -3,9 +3,7 @@
 <head>
   <title>Market</title>
   <link href="stile.css" rel="stylesheet" type="text/css">
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.5.0/dist/full.css" rel="stylesheet" type="text/css" />
-
-  <script src="https://cdn.tailwindcss.com"></script>
+  
 
 </head>
 <body>
@@ -54,9 +52,7 @@ foreach ($result as $row) {
 }
 $codProdotto = $row["CodP"];
 
-?>
-</div>
-<?php
+
   //echo $_POST["nomeProdotto"];
   $servername = "localhost";
   $username = "root";
@@ -71,7 +67,8 @@ $codProdotto = $row["CodP"];
   }
 
   
-  $sql = "SELECT fornitore.nome AS fNome , fp.costo AS prezzo , fp.giornoSpedizione AS tempo from fp, fornitore WHERE fp.codF = fornitore.codF AND fp.codP = '" . $codProdotto . "' AND fp.quantita >= '" . $quantita . "' ORDER BY fp.costo ASC";
+  $sql = "SELECT fornitore.nome AS fNome , fp.costo AS prezzo , fp.giornoSpedizione AS tempo ,sconto.valore AS sconto, sconto.scadenza AS scade,
+   sconto.condizione AS requisito, sconto.tipo AS tipoS  from fp, fornitore,registrosconto,sconto WHERE fp.codF = fornitore.codF AND fornitore.codF=registrosconto.id_codF AND registrosconto.id_codSconto=sconto.id AND fp.codP = '" . $codProdotto . "' AND fp.quantita >= '" . $quantita . "' GROUP BY fornitore.nome ";
   
 
 
@@ -84,8 +81,8 @@ $codProdotto = $row["CodP"];
 
 
   mysqli_close($conn);
-?>
-<?php
+
+
 $minPrezzo = null;
 $minGiorno = null;
 foreach ($result as $row){
@@ -103,20 +100,42 @@ foreach ($result as $row){
 
 echo "<div id=elenco>";
 foreach ($result as $row) {
-  echo "<input type='radio' name='acquista' value='{$row["fNome"]}' />" . $row["fNome"] . " "; 
-  echo "prezzo:  "."{$row["prezzo"]} ". " " ;
-  echo "tempo di consegna stimata"."{$row["tempo"] }". "<br />";
-  
+  if ($row["prezzo"]==$minPrezzo){
+    $prezzoTOt = $row["prezzo"] * $quantita;
+    echo "<h3> Il fornitore " . $row["fNome"] . " offre il prezzo più basso (senza applicando sconto): " .$row["prezzo"] * $quantita. "€</h3>";
+  }
+  if($row["tempo"]==$minGiorno){
+    echo "<h3> Il fornitore " . $row["fNome"] . " offre il tempo di spedizione più corto: " . $row["tempo"] . " giorni</h3>";
+  }
 }
+foreach ($result as $row){
+  $prezzoScontato=0;
+  if($row["tipoS"] == "quantita"){
+    if($quantita >= $row["requisito"]){
+      $prezzoScontato += $row["prezzo"] * $quantita *$row["sconto"] / 100;
+      
+    }
+  }
+  if($row["tipoS"] == "prezzoTotale"){
+    if($row["prezzo"] * $quantita >= $row["requisito"]){
+      $prezzoScontato += $row["prezzo"] * $quantita *$row["sconto"] / 100;
+      
+    }
+  }
+  if($row["tipoS"] == "stagione"){
+    if(date("Y-m-d") <= $row["scade"]){
+      $prezzoScontato += $row["prezzo"] * $quantita *$row["sconto"] / 100;
+      
+    }
+  }
+  if($prezzoTOt >= $row["prezzo"] * $quantita - $prezzoScontato){
+    $prezzoTOt = $row["prezzo"] * $quantita - $prezzoScontato;
+  }
+}
+echo "<h3> Il prezzo totale più basso (applicando sconto) è: " . $prezzoTOt . "€</h3>";
 
-echo "<form action=''>";
-echo "<input type='submit'value='acquista'>";
-
-echo "</form>";
-echo "<form action=''>";
-echo "<input type='submit'value='Aggiungi al carrello'>";
-echo "</form>";
 echo "</div>";
 ?>
+</div>
 </body>
 </html>
