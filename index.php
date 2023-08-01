@@ -1,46 +1,19 @@
+<!DOCTYPE html>
 <html>
 
 <head>
-  <title>esercizio</title>
-  <style>
-    body {
-      background-color: #f8fafc;
-    }
-
-    div#menu {
-      display: flex;
-    }
-
-    .prodotto {
-      margin: 10px;
-      display: flex;
-      flex-direction: column;
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);  
-      padding: 10px;
-    }
-    .row {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-    }
-    .titolo {
-      text-align: center;
-    }
-    input[type="number"] {
-      width: 60%;
-    }
-    img {
-      width: 100%;
-    }
-    input[type="submit"] {
-      width: 40%;
-    }
-  </style>
+  <title>Market</title>
+  <link href="stile.css" rel="stylesheet" type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@3.5.0/dist/full.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body>
+  <div id="header">
+    <h1 class="titolo">Market</h1>
+    <img id='carrello' src="https://media.istockphoto.com/id/1199755251/it/vettoriale/icona-dettagliata-del-negozio-di-simboli-del-carrello-della-spesa-completa.jpg?s=612x612&w=0&k=20&c=EHpCX20fLAobdgjcxaLEjubWKUVLyYnWJokTV5OGEfA=" alt="market"  >
+  </div>
+  
   <?php
   $servername = "localhost";
   $username = "root";
@@ -54,12 +27,9 @@
     die("Connection failed: " . mysqli_connect_error());
   }
 
-  //$sql = "SELECT * from prova";
+  
   $sql = "SELECT * from p ";
-  //echo $sql;
-  //echo "<br>";
-
-  //die;
+  
 
 
   $result = mysqli_query($conn, $sql);
@@ -80,8 +50,8 @@
 
     foreach ($result as $row) {
       echo "<form class='prodotto' method='POST' action='oggetto.php'>";
-      echo "<h2 class=titolo>" . $row["Nome"] . "</h2>";
-      echo "<img src='" . $row["foto"] . "' alt='penna' width='200' height='200'>";
+      echo "<h2 class='titolo'>" . $row["Nome"] . "</h2>";
+      echo "<img class='immagine' src='" . $row["foto"] . "' alt='penna' width='200' height='200'>";
       echo "<input type='hidden' name='nomeProdotto' value='" . $row["Nome"] . "'>";
       echo "<div class='row'> ";
       echo "<input type='number' name='quantita' value='1' min='1'> ";
