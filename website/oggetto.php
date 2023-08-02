@@ -62,7 +62,7 @@
       die("Connection failed: " . mysqli_connect_error());
     }
 
-
+// restituisce le informazioni sul prodotto e sul fornitore
     $sql = "SELECT fornitore.nome AS fNome , fp.costo AS prezzo , fp.giornoSpedizione AS tempo   
    from fp, fornitore 
    WHERE fp.codF = fornitore.codF  AND fp.codP = '" . $codProdotto . "' AND fp.quantita >= '" . $quantita . "' ";
@@ -82,8 +82,7 @@
 //trova il prezzo minimo e il tempo minimo
     $minPrezzo = null;
     $minGiorno = null;
-    $minPFnome = null;
-    $minGFnome = null;
+
     foreach ($result as $row) {
       if ($minPrezzo == null && $minGiorno == null) {
         $minPrezzo = $row["prezzo"];
@@ -91,12 +90,12 @@
       }
       if ($row["prezzo"] < $minPrezzo) {
         $minPrezzo = $row["prezzo"];
-        $minPFnome = $row["fNome"];
+      
         $prezzoTOt = $row["prezzo"] * $quantita;
       }
       if ($row["tempo"] < $minGiorno) {
         $minGiorno = $row["tempo"];
-        $minGFnome = $row["fNome"];
+      
       }
     }
 
@@ -105,12 +104,19 @@
       
       if ($row["prezzo"] == $minPrezzo) {
         echo "<h3>";
-        echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"]*$quantita . "€ e lo spedisce in " . $row["tempo"] . " giorni ";
-        echo " è il fornitore più economico <br>";
+        echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"]*$quantita . "€ ";
+        echo "     (più consigliato) <br>";
         echo "</h3>";
         continue;
       }
-      echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"]*$quantita . "€ e lo spedisce in " . $row["tempo"] . " giorni <br>";
+      if($row["tempo"] == $minGiorno){
+        echo "<h3>";
+        echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"]*$quantita . "€ ";
+        echo "     (più veloce) <br>";
+        echo "</h3>";
+        continue;
+      }
+      echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"]*$quantita . "€ <br>";
     }
 
     // Create connection
@@ -120,7 +126,7 @@
       die("Connection failed: " . mysqli_connect_error());
     }
 
-
+// restituirà le informazioni sullo sconto
     $sql = "SELECT fp.costo AS prezzo , sconto.valore AS sconto, sconto.scadenza AS scade,sconto.condizione AS requisito, sconto.tipo AS tipoS  
     from fp, fornitore,registrosconto,sconto WHERE fp.codF = fornitore.codF AND fornitore.codF=registrosconto.id_codF AND registrosconto.id_codSconto=sconto.id AND fp.codP = '" . $codProdotto . "' AND fp.quantita >= '" . $quantita . "'";
 
@@ -162,8 +168,8 @@
         $prezzoSMinimo = $prezzoScontato;
       }
     }
-    echo "prezzo scontato: " . $prezzoScontato . "€";
-    echo "<h3> Il prezzo totale più basso (applicando sconto) è: " . $prezzoSMinimo . "€</h3>";
+    echo "<h3> prezzo minimo scontato: " . $prezzoScontato . "€</h3>";
+
 
     echo "</div>";
     ?>
