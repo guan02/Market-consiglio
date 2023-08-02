@@ -8,10 +8,6 @@
 </head>
 
 <body>
-  <div id="header">
-    <h1 class="titolo">Market</h1>
-    <img id='carrello' src="https://media.istockphoto.com/id/1199755251/it/vettoriale/icona-dettagliata-del-negozio-di-simboli-del-carrello-della-spesa-completa.jpg?s=612x612&w=0&k=20&c=EHpCX20fLAobdgjcxaLEjubWKUVLyYnWJokTV5OGEfA=" alt="market"  >
-  </div>
   
   <?php
   $servername = "localhost";
@@ -26,7 +22,7 @@
     die("Connection failed: " . mysqli_connect_error());
   }
 
-  
+  //querry da eseguire
   $sql = "SELECT * from p ";
   
 
@@ -38,7 +34,7 @@
     echo "0 results";
   }
 
-
+  //chiudo la connessione
   mysqli_close($conn);
 
   ?>
@@ -49,9 +45,11 @@
 
     foreach ($result as $row) {
       echo "<form class='prodotto' method='POST' action='oggetto.php'>";
+      //carica i dati del prodotto
       echo "<h2 class='titolo'>" . $row["Nome"] . "</h2>";
       echo "<img class='immagine' src='" . $row["foto"] . "' alt='penna' width='200' height='200'>";
       echo "<input type='hidden' name='nomeProdotto' value='" . $row["Nome"] . "'>";
+      //campo input 
       echo "<div class='row'> ";
       echo "<input type='number' name='quantita' value='1' min='1'> ";
       echo "<input type='submit' value='Acquista'>";
