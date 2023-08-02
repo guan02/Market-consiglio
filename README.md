@@ -8,4 +8,4 @@ Questo software è utilizzato PHP e html come linguaggio di programmazione
 2. Attivare il servizio come Apache, Mysql e FileZilla
 3. Per accedere all'area di database serve scrivere nell'url http://localhost/phpmyadmin/ 
 4. importare il file dbinfo.sql che si trova nella cartella
-5. per avviare il programma : http://localhost/market-consiglio/
+5. per avviare il programma : http://localhost/market-consiglio/website/
