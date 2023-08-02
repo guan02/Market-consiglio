@@ -3,7 +3,7 @@
 
 <head>
   <title>Market</title>
-  <link href="stile.css" rel="stylesheet" type="text/css">
+  <link href="assets/stile.css" rel="stylesheet" type="text/css">
   
 </head>
 

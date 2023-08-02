@@ -3,7 +3,7 @@
 
 <head>
   <title>Market</title>
-  <link href="stile.css" rel="stylesheet" type="text/css">
+  <link href="assets/stile.css" rel="stylesheet" type="text/css">
 
 
 </head>
@@ -44,14 +44,14 @@
   <div id="menu">
     <?php
     //carica i dati del prodotto
-    foreach ($result as $row) {
+    $row = mysqli_fetch_assoc($result);
       echo "<div class='prodotto'>";
       echo "<h2 class='titolo'>" . $row["Nome"] . "</h2>";
       echo "<img class='immagine' src='" . $row["foto"] . "' alt='penna' width='200' height='200'>";
       echo "<input type='hidden' name='nomeProdotto' value='" . $row["Nome"] . "'>";
 
       echo "</div>";
-    }
+    
     $codProdotto = $row["CodP"];
 
 
@@ -63,8 +63,9 @@
     }
 
 
-    $sql = "SELECT fornitore.nome AS fNome , fp.costo AS prezzo , fp.giornoSpedizione AS tempo ,sconto.valore AS sconto, sconto.scadenza AS scade,
-   sconto.condizione AS requisito, sconto.tipo AS tipoS  from fp, fornitore,registrosconto,sconto WHERE fp.codF = fornitore.codF AND fornitore.codF=registrosconto.id_codF AND registrosconto.id_codSconto=sconto.id AND fp.codP = '" . $codProdotto . "' AND fp.quantita >= '" . $quantita . "'";
+    $sql = "SELECT fornitore.nome AS fNome , fp.costo AS prezzo , fp.giornoSpedizione AS tempo   
+   from fp, fornitore 
+   WHERE fp.codF = fornitore.codF  AND fp.codP = '" . $codProdotto . "' AND fp.quantita >= '" . $quantita . "' ";
 
 
 
@@ -100,9 +101,40 @@
     }
 
     echo "<div id=elenco>";
-    echo "<h3> Il fornitore " . $minPFnome . " offre il prezzo più basso: " . $minPrezzo * $quantita . "€</h3>";
-    echo "<h3> Il fornitore " . $minGFnome . " offre il tempo di spedizione più corto: " . $minGiorno . " giorni</h3>";
+    foreach ($result as $row){
+      
+      if ($row["prezzo"] == $minPrezzo) {
+        echo "<h3>";
+        echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"] . "€ e lo spedisce in " . $row["tempo"] . " giorni ";
+        echo " è il fornitore più economico <br>";
+        echo "</h3>";
+        continue;
+      }
+      echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"] . "€ e lo spedisce in " . $row["tempo"] . " giorni <br>";
+    }
 
+    // Create connection
+    $conn = mysqli_connect($servername, $username, $password, $dbname);
+    // Check connection
+    if (!$conn) {
+      die("Connection failed: " . mysqli_connect_error());
+    }
+
+
+    $sql = "SELECT fp.costo AS prezzo , sconto.valore AS sconto, sconto.scadenza AS scade,sconto.condizione AS requisito, sconto.tipo AS tipoS  
+    from fp, fornitore,registrosconto,sconto WHERE fp.codF = fornitore.codF AND fornitore.codF=registrosconto.id_codF AND registrosconto.id_codSconto=sconto.id AND fp.codP = '" . $codProdotto . "' AND fp.quantita >= '" . $quantita . "'";
+
+
+
+    $result = mysqli_query($conn, $sql);
+
+
+    if (mysqli_num_rows($result) == 0) {
+      echo "0 results";
+    }
+
+
+    mysqli_close($conn);
     // applica lo sconto
     foreach ($result as $row) {
 
