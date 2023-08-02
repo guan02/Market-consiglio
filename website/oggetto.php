@@ -105,12 +105,12 @@
       
       if ($row["prezzo"] == $minPrezzo) {
         echo "<h3>";
-        echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"] . "€ e lo spedisce in " . $row["tempo"] . " giorni ";
+        echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"]*$quantita . "€ e lo spedisce in " . $row["tempo"] . " giorni ";
         echo " è il fornitore più economico <br>";
         echo "</h3>";
         continue;
       }
-      echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"] . "€ e lo spedisce in " . $row["tempo"] . " giorni <br>";
+      echo "il fornitore " . $row["fNome"] . " offre il prodotto a " . $row["prezzo"]*$quantita . "€ e lo spedisce in " . $row["tempo"] . " giorni <br>";
     }
 
     // Create connection
@@ -138,32 +138,32 @@
     // applica lo sconto
     foreach ($result as $row) {
 
-      $prezzoScontato = 0;
+      $prezzoScontato = $row["prezzo"] * $quantita;
       // in base alla quantità
       if ($row["tipoS"] == "quantita") {
         if ($quantita >= $row["requisito"]) {
-          $prezzoScontato += $row["prezzo"] * $quantita * $row["sconto"] / 100;
+          $prezzoScontato *=  1- $row["sconto"] / 100;
         }
       }
       // in base al prezzo totale
       if ($row["tipoS"] == "prezzoTotale") {
         if ($row["prezzo"] * $quantita >= $row["requisito"]) {
-          $prezzoScontato += $row["prezzo"] * $quantita * $row["sconto"] / 100;
+          $prezzoScontato *=  1- $row["sconto"] / 100;
         }
       }
       // in base alla stagione
       if ($row["tipoS"] == "stagione") {
         if (strtotime("now") <= strtotime($row["scade"])) {
-          $prezzoScontato += $row["prezzo"] * $quantita * $row["sconto"] / 100;
+          $prezzoScontato *=  1- $row["sconto"] / 100;
         }
       }
-      // confronta il prezzo totale senza sconto con quello scontato
-      if ($prezzoTOt >= $row["prezzo"] * $quantita - $prezzoScontato) {
-        $prezzoTOt = $row["prezzo"] * $quantita - $prezzoScontato;
+      // confronta il prezzo totale minimo senza sconto con quello scontato
+      if ($prezzoScontato < $prezzoTOt) {
+        $prezzoSMinimo = $prezzoScontato;
       }
     }
     echo "prezzo scontato: " . $prezzoScontato . "€";
-    echo "<h3> Il prezzo totale più basso (applicando sconto) è: " . $prezzoTOt . "€</h3>";
+    echo "<h3> Il prezzo totale più basso (applicando sconto) è: " . $prezzoSMinimo . "€</h3>";
 
     echo "</div>";
     ?>
