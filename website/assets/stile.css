@@ -34,4 +34,17 @@ body {
   input[type="submit"] {
     width: 40%;
   }
+  .child {
+ 
+    margin: 100px;
+    
+  }
+  .coloreEconomico {
+    color: #74c278;
+    font-weight: 700;
+  }
+  .coloreVeloce {
+    color: red;
+    font-weight: 700;
+  }
   
