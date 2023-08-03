@@ -44,7 +44,7 @@
     <?php
 
     foreach ($result as $row) {
-      echo "<form class='prodotto' method='POST' action='oggetto.php'>";
+      echo "<form class='prodotto' method='POST' action='prodotto.php'>";
       //carica i dati del prodotto
       echo "<h2 class='titolo'>" . $row["Nome"] . "</h2>";
       echo "<img class='immagine' src='" . $row["foto"] . "' alt='penna' width='200' height='200'>";
