@@ -33,7 +33,7 @@ if (isset($_REQUEST["nome"]))
     }
   
     //querry  che restituisce le informazioni sullo sconto
-    $sql = "SELECT fornitore.nome AS fNome, fp.costo AS prezzo , sconto.valore AS sconto, sconto.scadenza AS scade,sconto.condizione AS requisito, sconto.tipo AS tipoS  
+    $sql = "SELECT fp.giornoSpedizione AS sTempo,fornitore.nome AS fNome, fp.costo AS prezzo , sconto.valore AS sconto, sconto.scadenza AS scade,sconto.condizione AS requisito, sconto.tipo AS tipoS  
     from fp, fornitore,registrosconto,sconto WHERE fp.codF = fornitore.codF AND fornitore.codF=registrosconto.id_codF AND registrosconto.id_codSconto=sconto.id AND fp.codP = '" . $codProdotto . "' AND fp.quantita >= '" . $quantita . "'";
 
   
@@ -51,7 +51,7 @@ if (isset($_REQUEST["nome"]))
     foreach ($result as $row) {
       
       if($row["fNome"]==$nomeFornitore){
-
+      $tempo=$row["sTempo"];
       $prezzoScontato = $row["prezzo"] * $quantita;
       // in base alla quantità
       if ($row["tipoS"] == "quantita") {
@@ -76,6 +76,10 @@ if (isset($_REQUEST["nome"]))
     }
     echo "<h3 class=child> prezzo finale: " . $prezzoScontato . "€</h3>";
     
+    echo "<h3 class=child> tempo di spedizione stimata: " . date("d/m/Y ", strtotime("+".$tempo." day")) ."</h3>";  
+    
+    
+     
     
     echo "</div>";
 ?>
